@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>christmas // scavenger</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    main { max-width: 680px; margin: 0 auto; padding: 28px 18px 64px; }
+    h1 { font-size: 18px; letter-spacing: .08em; text-transform: lowercase; margin: 0 0 18px; opacity: .9; }
+    .card { border: 1px solid rgba(127,127,127,.35); border-radius: 14px; padding: 18px; margin: 14px 0; }
+    .muted { opacity: .75; }
+    .row { display:flex; gap:10px; flex-wrap: wrap; align-items: center; }
+    input { flex: 1 1 240px; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(127,127,127,.45); background: transparent; }
+    button { padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(127,127,127,.45); background: transparent; cursor: pointer; }
+    button:hover { filter: brightness(1.05); }
+    .hint { margin-top: 10px; display:none; }
+    .footer { margin-top: 18px; font-size: 12px; opacity: .75; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>christmas // scavenger</h1>
+
+    <section class="card stage" id="s0">
+      <div class="muted">stage 0</div>
+      <h2>the entry</h2>
+      <p>christmas gifts don’t always fit under trees.<br/>some wait at the edge of the sky.</p>
+      <p><strong>riddle</strong><br/>“look for where christmas falls in the southern sun. the answer is written, not spoken.”</p>
+
+      <div class="row">
+        <input id="a0" autocomplete="off" placeholder="enter the word" />
+        <button onclick="check(0)">unlock</button>
+        <button onclick="hint(0)">hint</button>
+      </div>
+      <div class="hint" id="h0"></div>
+      <div class="footer" id="m0"></div>
+    </section>
+
+    <section class="card stage hidden" id="s1">
+      <div class="muted">stage 1</div>
+      <h2>distance & time</h2>
+      <p><strong>riddle</strong><br/>“two places. one day. midnight arrives twice, but not together.”</p>
+      <p class="muted">find the time difference between your city and mine on christmas day. submit the number.</p>
+
+      <div class="row">
+        <input id="a1" autocomplete="off" placeholder="e.g., 14" />
+        <button onclick="check(1)">continue</button>
+        <button onclick="hint(1)">hint</button>
+      </div>
+      <div class="hint" id="h1"></div>
+      <div class="footer" id="m1"></div>
+    </section>
+
+    <section class="card stage hidden" id="s2">
+      <div class="muted">stage 2</div>
+      <h2>the leap</h2>
+      <p><strong>riddle</strong><br/>“fear disappears the moment you stop standing still. find the place where falling becomes flying.”</p>
+      <p class="muted">go to the video i linked you. the code is hidden in the description.</p>
+
+      <div class="row">
+        <input id="a2" autocomplete="off" placeholder="enter the phrase" />
+        <button onclick="check(2)">continue</button>
+        <button onclick="hint(2)">hint</button>
+      </div>
+      <div class="hint" id="h2"></div>
+      <div class="footer" id="m2"></div>
+    </section>
+
+    <section class="card stage hidden" id="s3">
+      <div class="muted">stage 3</div>
+      <h2>the extra seat</h2>
+      <p><strong>riddle</strong><br/>“some gifts are heavier when carried alone. one more place was reserved.”</p>
+      <p class="muted">the clue is in the photo’s details (not the pixels).</p>
+
+      <div class="row">
+        <input id="a3" autocomplete="off" placeholder="enter the word" />
+        <button onclick="check(3)">reveal</button>
+        <button onclick="hint(3)">hint</button>
+      </div>
+      <div class="hint" id="h3"></div>
+      <div class="footer" id="m3"></div>
+    </section>
+
+    <section class="card stage hidden" id="final">
+      <div class="muted">final</div>
+      <h2>open when ready</h2>
+      <p>this is the part where i wish i was there in person.<br/>but i can still give you a reason to look up.</p>
+
+      <p><strong>your gift</strong></p>
+      <ul>
+        <li>voucher 1: <span>[paste voucher text here]</span></li>
+        <li>voucher 2: <span>[paste voucher text here]</span></li>
+        <li>voucher 3 (for your brother): <span>[paste voucher text here]</span></li>
+      </ul>
+
+      <p class="muted">this isn’t a gift to open. it’s a memory waiting to happen.</p>
+    </section>
+  </main>
+
+<script>
+  const stages = [
+    { id:"s0", next:"s1", answers:["summer"], hints:[
+      "it’s not on this page—it's in something i wrote for you.",
+      "look for a doc/page where the first letters matter.",
+      "take the first letter of each paragraph; it spells the word."
+    ]},
+    { id:"s1", next:"s2", answers:["19"], hints:[
+      "think clocks, not calendars.",
+      "compare your city in australia with mine in the us.",
+      "use any timezone converter and submit the hour difference."
+    ]},
+    { id:"s2", next:"s3", answers:["jump with me","jumpwithme"], hints:[
+      "the code is visible, but you have to filter.",
+      "look at the description text, not the video.",
+      "take ONLY the capitalized words."
+    ]},
+    { id:"s3", next:"final", answers:["brother"], hints:[
+      "the answer isn’t in the image itself.",
+      "it’s in the image’s details / info / properties.",
+      "check metadata (exif comment/description) for the hidden word."
+    ]}
+  ];
+
+  function norm(s){ return (s||"").toString().trim().toLowerCase().replace(/\s+/g," "); }
+
+  function showStage(stageId){
+    document.querySelectorAll(".stage").forEach(el=>el.classList.add("hidden"));
+    const el = document.getElementById(stageId);
+    if (el) el.classList.remove("hidden");
+    location.hash = stageId==="s0" ? "" : "#"+stageId;
+  }
+
+  function hint(i){
+    const h = document.getElementById("h"+i);
+    const m = document.getElementById("m"+i);
+    const used = Number(h.dataset.used||"0");
+    const nextHint = stages[i].hints[Math.min(used, stages[i].hints.length-1)];
+    h.textContent = "hint: " + nextHint;
+    h.style.display = "block";
+    h.dataset.used = String(used+1);
+    if (m) m.textContent = "";
+  }
+
+  function check(i){
+    const input = document.getElementById("a"+i);
+    const m = document.getElementById("m"+i);
+    const val = norm(input?.value);
+    const ok = stages[i].answers.some(a => norm(a) === val);
+
+    if (ok){
+      m.textContent = "unlocked.";
+      showStage(stages[i].next);
+    } else {
+      m.textContent = "not quite. try again or take a hint.";
+    }
+  }
+
+  window.hint = hint;
+  window.check = check;
+
+  function route(){
+    const hash = (location.hash||"").replace("#","").trim();
+    if (!hash) return showStage("s0");
+    const allowed = ["s0","s1","s2","s3","final"];
+    if (allowed.includes(hash)) showStage(hash);
+    else showStage("s0");
+  }
+  window.addEventListener("hashchange", route);
+  route();
+</script>
+</body>
+</html>
