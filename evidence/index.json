@@ -1,0 +1,31 @@
+{
+  "case": {
+    "case_id": "CASE-000",
+    "title": "UNFILED INCIDENT",
+    "jurisdiction": "ARCHIVE",
+    "summary_path": "case/overview.md"
+  },
+  "items": [
+    {
+      "id": "S-101",
+      "type": "statement",
+      "title": "Statement // S-101",
+      "path": "evidence/statements/S-101.md",
+      "unlocks_at": 0
+    },
+    {
+      "id": "L-301",
+      "type": "log",
+      "title": "Incident Log // L-301",
+      "path": "evidence/logs/L-301.md",
+      "unlocks_at": 0
+    },
+    {
+      "id": "T-401",
+      "type": "timeline",
+      "title": "Timeline // T-401",
+      "path": "evidence/logs/timeline.md",
+      "unlocks_at": 1
+    }
+  ]
+}
